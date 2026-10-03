@@ -10,7 +10,7 @@ st.set_page_config(
     layout="centered"
 )
 
-# Function to convert image to Base64 for the button background
+# Function to convert image to Base64 for button background
 def get_base64_image(image_path):
     if os.path.exists(image_path):
         with open(image_path, "rb") as img_file:
@@ -66,25 +66,22 @@ if "current_reason" not in st.session_state:
 # Base CSS Layout
 st.markdown("""
 <style>
-    /* Center the main column container */
     .block-container {
-        max-width: 450px !important;
-        padding-top: 3rem !important;
+        max-width: 500px !important;
+        padding-top: 4rem !important;
         padding-bottom: 2rem !important;
         margin: 0 auto !important;
     }
 
-    /* Titles */
     .tkinter-title {
         font-family: 'Times New Roman', Times, serif;
-        font-size: 28px;
+        font-size: 32px;
         font-weight: bold;
         color: #000000;
         text-align: center;
-        margin-bottom: 25px;
+        margin-bottom: 40px;
     }
 
-    /* Labels */
     .tkinter-label {
         font-family: Helvetica, Arial, sans-serif;
         font-size: 16px;
@@ -94,7 +91,6 @@ st.markdown("""
         margin-bottom: 4px;
     }
 
-    /* Text Inputs */
     .stTextInput > div > div > input {
         font-family: Helvetica, Arial, sans-serif;
         font-size: 16px;
@@ -103,14 +99,6 @@ st.markdown("""
         color: #000000;
         border: 1px solid #767676;
         border-radius: 4px;
-    }
-
-    /* FORCE ALL BUTTON CONTAINERS TO BE CENTERED */
-    div[data-testid="stButton"] {
-        display: flex !important;
-        justify-content: center !important;
-        align-items: center !important;
-        width: 100% !important;
     }
 
     #MainMenu {visibility: hidden;}
@@ -128,7 +116,11 @@ if not st.session_state.unlocked:
         .stApp {
             background-color: #FFC8DD;
         }
-        /* Centered Submit Button Styling */
+        div[data-testid="stButton"] {
+            display: flex !important;
+            justify-content: center !important;
+            width: 100% !important;
+        }
         div[data-testid="stButton"] > button {
             background-color: #FF5C8A !important;
             color: white !important;
@@ -138,9 +130,8 @@ if not st.session_state.unlocked:
             border: 2px solid #D83366 !important;
             border-radius: 4px !important;
             padding: 6px 24px !important;
-            margin-top: 15px !important;
+            margin-top: 20px !important;
             box-shadow: none !important;
-            width: auto !important;
         }
         div[data-testid="stButton"] > button:hover {
             background-color: #FF3366 !important;
@@ -160,13 +151,15 @@ if not st.session_state.unlocked:
     st.markdown("<div class='tkinter-label'>3. What is our usual date cafe?</div>", unsafe_allow_html=True)
     a3 = st.text_input("", key="q3", label_visibility="collapsed")
 
-    if st.button("Submit 💘"):
-        user_ans = [a1.strip().lower(), a2.strip().lower(), a3.strip().lower()]
-        if user_ans == answers:
-            st.session_state.unlocked = True
-            st.rerun()
-        else:
-            st.error("Oops! Wrong answer 😜 Try again!")
+    col1, col2, col3 = st.columns([1, 2, 1])
+    with col2:
+        if st.button("Submit 💘"):
+            user_ans = [a1.strip().lower(), a2.strip().lower(), a3.strip().lower()]
+            if user_ans == answers:
+                st.session_state.unlocked = True
+                st.rerun()
+            else:
+                st.error("Oops! Wrong answer 😜 Try again!")
 
 # =====================================================
 #                   LOVE PAGE
@@ -181,14 +174,25 @@ else:
         }}
         .reason-text {{
             font-family: Helvetica, Arial, sans-serif;
-            font-size: 20px;
+            font-size: 22px;
             color: #000000;
             text-align: center;
-            margin-top: 25px;
-            margin-bottom: 30px;
+            margin-top: 30px;
+            margin-bottom: 40px;
             min-height: 40px;
+            width: 100%;
         }}
-        /* Centered Interactive Heart Button */
+        /* Force element wrapper to center horizontally */
+        div[data-testid="stElementContainer"],
+        div[data-testid="stButton"],
+        div.stButton {{
+            display: flex !important;
+            justify-content: center !important;
+            align-items: center !important;
+            width: 100% !important;
+            margin: 0 auto !important;
+        }}
+        /* Interactive Heart Button */
         div[data-testid="stButton"] > button {{
             background-image: url('data:image/png;base64,{heart_b64}') !important;
             background-color: transparent !important;
@@ -197,11 +201,13 @@ else:
             background-position: center !important;
             border: none !important;
             outline: none !important;
-            width: 130px !important;
-            height: 130px !important;
+            width: 120px !important;
+            height: 120px !important;
             box-shadow: none !important;
             cursor: pointer !important;
             color: transparent !important;
+            margin: 0 auto !important;
+            display: block !important;
         }}
         div[data-testid="stButton"] > button:hover,
         div[data-testid="stButton"] > button:focus,
@@ -218,7 +224,9 @@ else:
     st.markdown("<div class='tkinter-title'>Why Bub Loves Bun &lt;3</div>", unsafe_allow_html=True)
     st.markdown(f"<div class='reason-text'>{st.session_state.current_reason}</div>", unsafe_allow_html=True)
 
-    # Clickable Heart Button
-    if st.button(" ", key="heart_btn"):
-        st.session_state.current_reason = random.choice(reasons)
-        st.rerun()
+    # Centered Heart Button Layout
+    col1, col2, col3 = st.columns([1, 1, 1])
+    with col2:
+        if st.button(" ", key="heart_btn"):
+            st.session_state.current_reason = random.choice(reasons)
+            st.rerun()
