@@ -1,40 +1,43 @@
 import random
 import os
+import base64
 import streamlit as st
 
-# Page configuration
+# Streamlit Page Setup
 st.set_page_config(
     page_title="Bub & Bun ❤️",
     page_icon="💖",
     layout="centered"
 )
 
-# Custom CSS matching your exact Tkinter UI
+# Helper function to encode image to Base64 for button background
+def get_base64_image(image_path):
+    if os.path.exists(image_path):
+        with open(image_path, "rb") as img_file:
+            return base64.b64encode(img_file.read()).decode()
+    return ""
+
+# Global Styles
 st.markdown("""
 <style>
-    /* Main pink background */
-    .stApp {
-        background-color: #FFC8DD;
-    }
-    
-    /* Center and constrain width like a desktop/mobile window */
+    /* Constrain width to simulate desktop/mobile window */
     .block-container {
-        max-width: 480px !important;
-        padding-top: 2.5rem !important;
+        max-width: 450px !important;
+        padding-top: 3rem !important;
         padding-bottom: 2rem !important;
     }
     
     /* Times New Roman bold headers matching Tkinter */
     .tkinter-title {
         font-family: 'Times New Roman', Times, serif;
-        font-size: 26px;
+        font-size: 28px;
         font-weight: bold;
         color: #000000;
         text-align: center;
-        margin-bottom: 20px;
+        margin-bottom: 25px;
     }
     
-    /* Question and Reason text */
+    /* Question labels */
     .tkinter-label {
         font-family: Helvetica, Arial, sans-serif;
         font-size: 16px;
@@ -42,15 +45,6 @@ st.markdown("""
         text-align: center;
         margin-top: 10px;
         margin-bottom: 4px;
-    }
-    
-    .reason-text {
-        font-family: Helvetica, Arial, sans-serif;
-        font-size: 20px;
-        color: #000000;
-        text-align: center;
-        margin-top: 25px;
-        margin-bottom: 25px;
     }
 
     /* Centered Text Inputs */
@@ -63,27 +57,8 @@ st.markdown("""
         border: 1px solid #767676;
         border-radius: 4px;
     }
-    
-    /* Pink Submit Button */
-    div.stButton > button {
-        background-color: #FF5C8A !important;
-        color: white !important;
-        font-family: Helvetica, Arial, sans-serif !important;
-        font-size: 18px !important;
-        font-weight: bold !important;
-        border: 2px solid #D83366 !important;
-        border-radius: 4px !important;
-        padding: 6px 20px !important;
-        display: block;
-        margin: 0 auto;
-    }
-    
-    div.stButton > button:hover {
-        background-color: #FF3366 !important;
-        color: white !important;
-    }
 
-    /* Clean mobile layout: hide default Streamlit chrome */
+    /* Hide default Streamlit header/footer for clean app view */
     #MainMenu {visibility: hidden;}
     header {visibility: hidden;}
     footer {visibility: hidden;}
@@ -132,7 +107,7 @@ reasons = [
 
 answers = ["mlue", "pengu", "beanshot cafe"]
 
-# Session State
+# Session State Initializations
 if "unlocked" not in st.session_state:
     st.session_state.unlocked = False
 if "current_reason" not in st.session_state:
@@ -142,6 +117,26 @@ if "current_reason" not in st.session_state:
 #                 QUESTION PAGE
 # =====================================================
 if not st.session_state.unlocked:
+    st.markdown("""
+    <style>
+        .stApp {
+            background-color: #FFC8DD;
+        }
+        div[data-testid="stButton"] > button {
+            background-color: #FF5C8A !important;
+            color: white !important;
+            font-family: Helvetica, Arial, sans-serif !important;
+            font-size: 18px !important;
+            font-weight: bold !important;
+            border: 2px solid #D83366 !important;
+            border-radius: 4px !important;
+            padding: 6px 24px !important;
+            display: block !important;
+            margin: 0 auto !important;
+        }
+    </style>
+    """, unsafe_allow_html=True)
+
     st.markdown("<div class='tkinter-title'>Answer all 3 correctly to unlock &lt;3</div>", unsafe_allow_html=True)
 
     st.markdown("<div class='tkinter-label'>1. What is the your favourite colour?</div>", unsafe_allow_html=True)
@@ -166,15 +161,57 @@ if not st.session_state.unlocked:
 #                   LOVE PAGE
 # =====================================================
 else:
+    heart_b64 = get_base64_image("heart.png")
+
+    st.markdown(f"""
+    <style>
+        .stApp {{
+            background-color: #FFB6C1;
+        }}
+        .reason-text {{
+            font-family: Helvetica, Arial, sans-serif;
+            font-size: 18px;
+            color: #000000;
+            text-align: center;
+            margin-top: 35px;
+            margin-bottom: 35px;
+            min-height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }}
+        div[data-testid="stButton"] > button {{
+            background-image: url('data:image/png;base64,{heart_b64}') !important;
+            background-color: transparent !important;
+            background-size: contain !important;
+            background-repeat: no-repeat !important;
+            background-position: center !important;
+            border: none !important;
+            outline: none !important;
+            width: 120px !important;
+            height: 120px !important;
+            box-shadow: none !important;
+            cursor: pointer !important;
+            color: transparent !important;
+            margin: 0 auto !important;
+            display: block !important;
+        }}
+        div[data-testid="stButton"] > button:hover,
+        div[data-testid="stButton"] > button:focus,
+        div[data-testid="stButton"] > button:active {{
+            background-color: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
+            transform: scale(1.08);
+            transition: transform 0.15s ease-in-out;
+        }}
+    </style>
+    """, unsafe_allow_html=True)
+
     st.markdown("<div class='tkinter-title'>Why Bub Loves Bun &lt;3</div>", unsafe_allow_html=True)
     st.markdown(f"<div class='reason-text'>{st.session_state.current_reason}</div>", unsafe_allow_html=True)
 
-    # Display heart image if uploaded, or heart button
-    if os.path.exists("heart.png"):
-        col1, col2, col3 = st.columns([1, 1, 1])
-        with col2:
-            st.image("heart.png", width=120)
-
-    if st.button("❤️️ Click Heart ❤️"):
+    # Clickable Heart Button
+    if st.button(" ", key="heart_btn"):
         st.session_state.current_reason = random.choice(reasons)
         st.rerun()
