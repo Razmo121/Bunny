@@ -143,6 +143,7 @@ if not st.session_state.unlocked:
         .stApp {
             background-color: #FFC8DD;
         }
+        div[data-testid="stElementContainer"],
         div[data-testid="stButton"] {
             display: flex !important;
             justify-content: center !important;
@@ -204,13 +205,17 @@ else:
             margin-bottom: 35px;
             width: 100%;
         }}
-        div[data-testid="stButton"] {{
+        /* Force Streamlit container wrappers to flex-center horizontally */
+        div[data-testid="stElementContainer"],
+        div[data-testid="stButton"],
+        div.stButton {{
             display: flex !important;
             justify-content: center !important;
             align-items: center !important;
             width: 100% !important;
             margin: 0 auto !important;
         }}
+        /* Interactive Heart Button */
         div[data-testid="stButton"] > button {{
             background-image: url('data:image/png;base64,{heart_b64}') !important;
             background-color: transparent !important;
