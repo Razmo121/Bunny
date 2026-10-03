@@ -2,6 +2,7 @@ import random
 import os
 import base64
 import streamlit as st
+import streamlit.components.v1 as components  # Added for JS injection
 
 # Streamlit Page Setup
 st.set_page_config(
@@ -10,12 +11,37 @@ st.set_page_config(
     layout="centered"
 )
 
-# Function to convert image to Base64 for button background
+# Function to convert image to Base64
 def get_base64_image(image_path):
     if os.path.exists(image_path):
         with open(image_path, "rb") as img_file:
             return base64.b64encode(img_file.read()).decode()
     return ""
+
+heart_b64 = get_base64_image("heart.png")
+
+# Force Android/iOS home screen shortcut to use the heart icon
+if heart_b64:
+    components.html(f"""
+        <script>
+            const parentHead = window.parent.document.getElementsByTagName('head')[0];
+            
+            // Remove standard Streamlit manifest/icons that override home screen shortcut
+            const oldIcons = window.parent.document.querySelectorAll("link[rel*='icon'], link[rel='apple-touch-icon']");
+            oldIcons.forEach(el => el.remove());
+
+            // Inject Heart image as Home Screen icon
+            const appleIcon = window.parent.document.createElement('link');
+            appleIcon.rel = 'apple-touch-icon';
+            appleIcon.href = 'data:image/png;base64,{heart_b64}';
+            parentHead.appendChild(appleIcon);
+
+            const favIcon = window.parent.document.createElement('link');
+            favIcon.rel = 'shortcut icon';
+            favIcon.href = 'data:image/png;base64,{heart_b64}';
+            parentHead.appendChild(favIcon);
+        </script>
+    """, height=0, width=0)
 
 reasons = [
     "You make me smile", "I feel happy when I talk to you", "You are the cutest person ever",
@@ -151,22 +177,18 @@ if not st.session_state.unlocked:
     st.markdown("<div class='tkinter-label'>3. What is our usual date cafe?</div>", unsafe_allow_html=True)
     a3 = st.text_input("", key="q3", label_visibility="collapsed")
 
-    col1, col2, col3 = st.columns([1, 2, 1])
-    with col2:
-        if st.button("Submit 💘"):
-            user_ans = [a1.strip().lower(), a2.strip().lower(), a3.strip().lower()]
-            if user_ans == answers:
-                st.session_state.unlocked = True
-                st.rerun()
-            else:
-                st.error("Oops! Wrong answer 😜 Try again!")
+    if st.button("Submit 💘"):
+        user_ans = [a1.strip().lower(), a2.strip().lower(), a3.strip().lower()]
+        if user_ans == answers:
+            st.session_state.unlocked = True
+            st.rerun()
+        else:
+            st.error("Oops! Wrong answer 😜 Try again!")
 
 # =====================================================
 #                   LOVE PAGE
 # =====================================================
 else:
-    heart_b64 = get_base64_image("heart.png")
-
     st.markdown(f"""
     <style>
         .stApp {{
@@ -178,21 +200,16 @@ else:
             color: #000000;
             text-align: center;
             margin-top: 30px;
-            margin-bottom: 40px;
-            min-height: 40px;
+            margin-bottom: 35px;
             width: 100%;
         }}
-        /* Force element wrapper to center horizontally */
-        div[data-testid="stElementContainer"],
-        div[data-testid="stButton"],
-        div.stButton {{
+        div[data-testid="stButton"] {{
             display: flex !important;
             justify-content: center !important;
             align-items: center !important;
             width: 100% !important;
             margin: 0 auto !important;
         }}
-        /* Interactive Heart Button */
         div[data-testid="stButton"] > button {{
             background-image: url('data:image/png;base64,{heart_b64}') !important;
             background-color: transparent !important;
@@ -201,8 +218,8 @@ else:
             background-position: center !important;
             border: none !important;
             outline: none !important;
-            width: 120px !important;
-            height: 120px !important;
+            width: 130px !important;
+            height: 130px !important;
             box-shadow: none !important;
             cursor: pointer !important;
             color: transparent !important;
@@ -224,9 +241,6 @@ else:
     st.markdown("<div class='tkinter-title'>Why Bub Loves Bun &lt;3</div>", unsafe_allow_html=True)
     st.markdown(f"<div class='reason-text'>{st.session_state.current_reason}</div>", unsafe_allow_html=True)
 
-    # Centered Heart Button Layout
-    col1, col2, col3 = st.columns([1, 1, 1])
-    with col2:
-        if st.button(" ", key="heart_btn"):
-            st.session_state.current_reason = random.choice(reasons)
-            st.rerun()
+    if st.button(" ", key="heart_btn"):
+        st.session_state.current_reason = random.choice(reasons)
+        st.rerun()
