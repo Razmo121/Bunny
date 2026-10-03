@@ -2,7 +2,7 @@ import random
 import os
 import base64
 import streamlit as st
-import streamlit.components.v1 as components  # Added for JS injection
+import streamlit.components.v1 as components
 
 # Streamlit Page Setup
 st.set_page_config(
@@ -20,22 +20,23 @@ def get_base64_image(image_path):
 
 heart_b64 = get_base64_image("heart.png")
 
-# Force Android/iOS home screen shortcut to use the heart icon
+# Inject Heart Image as the iOS Home Screen Icon & Favicon
 if heart_b64:
     components.html(f"""
         <script>
             const parentHead = window.parent.document.getElementsByTagName('head')[0];
             
-            // Remove standard Streamlit manifest/icons that override home screen shortcut
+            // Remove standard Streamlit icons that override home screen shortcut
             const oldIcons = window.parent.document.querySelectorAll("link[rel*='icon'], link[rel='apple-touch-icon']");
             oldIcons.forEach(el => el.remove());
 
-            // Inject Heart image as Home Screen icon
+            // Inject Heart image as iOS Home Screen Icon
             const appleIcon = window.parent.document.createElement('link');
             appleIcon.rel = 'apple-touch-icon';
             appleIcon.href = 'data:image/png;base64,{heart_b64}';
             parentHead.appendChild(appleIcon);
 
+            // Inject Heart image as browser shortcut icon
             const favIcon = window.parent.document.createElement('link');
             favIcon.rel = 'shortcut icon';
             favIcon.href = 'data:image/png;base64,{heart_b64}';
