@@ -1,49 +1,92 @@
 import random
+import os
 import streamlit as st
 
-# Streamlit page setup
+# Page configuration
 st.set_page_config(
     page_title="Bub & Bun ❤️",
     page_icon="💖",
     layout="centered"
 )
 
-# Custom pink CSS styling matching your original app
+# Custom CSS matching your exact Tkinter UI
 st.markdown("""
 <style>
+    /* Main pink background */
     .stApp {
         background-color: #FFC8DD;
     }
-    .stTextInput > div > div > input {
-        border-radius: 10px;
-        background-color: #FFFFFF;
+    
+    /* Center and constrain width like a desktop/mobile window */
+    .block-container {
+        max-width: 480px !important;
+        padding-top: 2.5rem !important;
+        padding-bottom: 2rem !important;
     }
-    .stButton>button {
-        background-color: #FF5C8A;
-        color: white;
+    
+    /* Times New Roman bold headers matching Tkinter */
+    .tkinter-title {
+        font-family: 'Times New Roman', Times, serif;
+        font-size: 26px;
         font-weight: bold;
-        border-radius: 12px;
-        border: none;
-        padding: 12px 24px;
-        font-size: 18px;
-        width: 100%;
-    }
-    .stButton>button:hover {
-        background-color: #ff3366;
-        color: white;
-    }
-    .reason-box {
-        background-color: #FFB6C1;
-        padding: 25px;
-        border-radius: 20px;
+        color: #000000;
         text-align: center;
-        margin: 20px 0;
-        box-shadow: 0px 4px 10px rgba(0,0,0,0.05);
+        margin-bottom: 20px;
     }
-    h1, h2, h3, label {
-        color: #4A0E17 !important;
+    
+    /* Question and Reason text */
+    .tkinter-label {
+        font-family: Helvetica, Arial, sans-serif;
+        font-size: 16px;
+        color: #000000;
         text-align: center;
+        margin-top: 10px;
+        margin-bottom: 4px;
     }
+    
+    .reason-text {
+        font-family: Helvetica, Arial, sans-serif;
+        font-size: 20px;
+        color: #000000;
+        text-align: center;
+        margin-top: 25px;
+        margin-bottom: 25px;
+    }
+
+    /* Centered Text Inputs */
+    .stTextInput > div > div > input {
+        font-family: Helvetica, Arial, sans-serif;
+        font-size: 16px;
+        text-align: center;
+        background-color: #FFFFFF;
+        color: #000000;
+        border: 1px solid #767676;
+        border-radius: 4px;
+    }
+    
+    /* Pink Submit Button */
+    div.stButton > button {
+        background-color: #FF5C8A !important;
+        color: white !important;
+        font-family: Helvetica, Arial, sans-serif !important;
+        font-size: 18px !important;
+        font-weight: bold !important;
+        border: 2px solid #D83366 !important;
+        border-radius: 4px !important;
+        padding: 6px 20px !important;
+        display: block;
+        margin: 0 auto;
+    }
+    
+    div.stButton > button:hover {
+        background-color: #FF3366 !important;
+        color: white !important;
+    }
+
+    /* Clean mobile layout: hide default Streamlit chrome */
+    #MainMenu {visibility: hidden;}
+    header {visibility: hidden;}
+    footer {visibility: hidden;}
 </style>
 """, unsafe_allow_html=True)
 
@@ -89,7 +132,7 @@ reasons = [
 
 answers = ["mlue", "pengu", "beanshot cafe"]
 
-# Session State Initializations
+# Session State
 if "unlocked" not in st.session_state:
     st.session_state.unlocked = False
 if "current_reason" not in st.session_state:
@@ -99,12 +142,16 @@ if "current_reason" not in st.session_state:
 #                 QUESTION PAGE
 # =====================================================
 if not st.session_state.unlocked:
-    st.markdown("<h1>Answer all 3 correctly to unlock &lt;3</h1>", unsafe_allow_html=True)
-    st.write("")
+    st.markdown("<div class='tkinter-title'>Answer all 3 correctly to unlock &lt;3</div>", unsafe_allow_html=True)
 
-    a1 = st.text_input("1. What is your favourite colour?", key="q1")
-    a2 = st.text_input("2. What is the name of our daughter?", key="q2")
-    a3 = st.text_input("3. What is our usual date cafe?", key="q3")
+    st.markdown("<div class='tkinter-label'>1. What is the your favourite colour?</div>", unsafe_allow_html=True)
+    a1 = st.text_input("", key="q1", label_visibility="collapsed")
+
+    st.markdown("<div class='tkinter-label'>2. What is the name of our daughter?</div>", unsafe_allow_html=True)
+    a2 = st.text_input("", key="q2", label_visibility="collapsed")
+
+    st.markdown("<div class='tkinter-label'>3. What is our usual date cafe?</div>", unsafe_allow_html=True)
+    a3 = st.text_input("", key="q3", label_visibility="collapsed")
 
     st.write("")
     if st.button("Submit 💘"):
@@ -119,13 +166,15 @@ if not st.session_state.unlocked:
 #                   LOVE PAGE
 # =====================================================
 else:
-    st.markdown("<h1>Why Bub Loves Bun &lt;3</h1>", unsafe_allow_html=True)
-    
-    st.markdown(
-        f"<div class='reason-box'><h3>{st.session_state.current_reason}</h3></div>",
-        unsafe_allow_html=True
-    )
+    st.markdown("<div class='tkinter-title'>Why Bub Loves Bun &lt;3</div>", unsafe_allow_html=True)
+    st.markdown(f"<div class='reason-text'>{st.session_state.current_reason}</div>", unsafe_allow_html=True)
 
-    if st.button("❤️ Click for a Reason ❤️️"):
+    # Display heart image if uploaded, or heart button
+    if os.path.exists("heart.png"):
+        col1, col2, col3 = st.columns([1, 1, 1])
+        with col2:
+            st.image("heart.png", width=120)
+
+    if st.button("❤️️ Click Heart ❤️"):
         st.session_state.current_reason = random.choice(reasons)
         st.rerun()
