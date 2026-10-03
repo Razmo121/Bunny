@@ -6,7 +6,7 @@ import streamlit.components.v1 as components  # Added for JS injection
 
 # Streamlit Page Setup
 st.set_page_config(
-    page_title="Bub & Bun ❤️",
+    page_title="Bunny",
     page_icon="heart.png",
     layout="centered"
 )
