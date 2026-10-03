@@ -10,62 +10,13 @@ st.set_page_config(
     layout="centered"
 )
 
-# Helper function to encode image to Base64 for button background
+# Function to convert image to Base64 for the button background
 def get_base64_image(image_path):
     if os.path.exists(image_path):
         with open(image_path, "rb") as img_file:
             return base64.b64encode(img_file.read()).decode()
     return ""
 
-# Global Styles
-st.markdown("""
-<style>
-    /* Constrain width to simulate desktop/mobile window */
-    .block-container {
-        max-width: 450px !important;
-        padding-top: 3rem !important;
-        padding-bottom: 2rem !important;
-    }
-    
-    /* Times New Roman bold headers matching Tkinter */
-    .tkinter-title {
-        font-family: 'Times New Roman', Times, serif;
-        font-size: 28px;
-        font-weight: bold;
-        color: #000000;
-        text-align: center;
-        margin-bottom: 25px;
-    }
-    
-    /* Question labels */
-    .tkinter-label {
-        font-family: Helvetica, Arial, sans-serif;
-        font-size: 16px;
-        color: #000000;
-        text-align: center;
-        margin-top: 10px;
-        margin-bottom: 4px;
-    }
-
-    /* Centered Text Inputs */
-    .stTextInput > div > div > input {
-        font-family: Helvetica, Arial, sans-serif;
-        font-size: 16px;
-        text-align: center;
-        background-color: #FFFFFF;
-        color: #000000;
-        border: 1px solid #767676;
-        border-radius: 4px;
-    }
-
-    /* Hide default Streamlit header/footer for clean app view */
-    #MainMenu {visibility: hidden;}
-    header {visibility: hidden;}
-    footer {visibility: hidden;}
-</style>
-""", unsafe_allow_html=True)
-
-# List of reasons
 reasons = [
     "You make me smile", "I feel happy when I talk to you", "You are the cutest person ever",
     "You always support me", "I love your laugh", "Because you're YOU", "You are my favourite human",
@@ -107,11 +58,66 @@ reasons = [
 
 answers = ["mlue", "pengu", "beanshot cafe"]
 
-# Session State Initializations
 if "unlocked" not in st.session_state:
     st.session_state.unlocked = False
 if "current_reason" not in st.session_state:
     st.session_state.current_reason = "Click the heart! <3"
+
+# Base CSS Layout
+st.markdown("""
+<style>
+    /* Center the main column container */
+    .block-container {
+        max-width: 450px !important;
+        padding-top: 3rem !important;
+        padding-bottom: 2rem !important;
+        margin: 0 auto !important;
+    }
+
+    /* Titles */
+    .tkinter-title {
+        font-family: 'Times New Roman', Times, serif;
+        font-size: 28px;
+        font-weight: bold;
+        color: #000000;
+        text-align: center;
+        margin-bottom: 25px;
+    }
+
+    /* Labels */
+    .tkinter-label {
+        font-family: Helvetica, Arial, sans-serif;
+        font-size: 16px;
+        color: #000000;
+        text-align: center;
+        margin-top: 12px;
+        margin-bottom: 4px;
+    }
+
+    /* Text Inputs */
+    .stTextInput > div > div > input {
+        font-family: Helvetica, Arial, sans-serif;
+        font-size: 16px;
+        text-align: center;
+        background-color: #FFFFFF;
+        color: #000000;
+        border: 1px solid #767676;
+        border-radius: 4px;
+    }
+
+    /* FORCE ALL BUTTON CONTAINERS TO BE CENTERED */
+    div[data-testid="stButton"] {
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+        width: 100% !important;
+    }
+
+    #MainMenu {visibility: hidden;}
+    header {visibility: hidden;}
+    footer {visibility: hidden;}
+</style>
+""", unsafe_allow_html=True)
 
 # =====================================================
 #                 QUESTION PAGE
@@ -122,6 +128,7 @@ if not st.session_state.unlocked:
         .stApp {
             background-color: #FFC8DD;
         }
+        /* Centered Submit Button Styling */
         div[data-testid="stButton"] > button {
             background-color: #FF5C8A !important;
             color: white !important;
@@ -131,8 +138,13 @@ if not st.session_state.unlocked:
             border: 2px solid #D83366 !important;
             border-radius: 4px !important;
             padding: 6px 24px !important;
-            display: block !important;
-            margin: 0 auto !important;
+            margin-top: 15px !important;
+            box-shadow: none !important;
+            width: auto !important;
+        }
+        div[data-testid="stButton"] > button:hover {
+            background-color: #FF3366 !important;
+            color: white !important;
         }
     </style>
     """, unsafe_allow_html=True)
@@ -148,7 +160,6 @@ if not st.session_state.unlocked:
     st.markdown("<div class='tkinter-label'>3. What is our usual date cafe?</div>", unsafe_allow_html=True)
     a3 = st.text_input("", key="q3", label_visibility="collapsed")
 
-    st.write("")
     if st.button("Submit 💘"):
         user_ans = [a1.strip().lower(), a2.strip().lower(), a3.strip().lower()]
         if user_ans == answers:
@@ -170,16 +181,14 @@ else:
         }}
         .reason-text {{
             font-family: Helvetica, Arial, sans-serif;
-            font-size: 18px;
+            font-size: 20px;
             color: #000000;
             text-align: center;
-            margin-top: 35px;
-            margin-bottom: 35px;
-            min-height: 50px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            margin-top: 25px;
+            margin-bottom: 30px;
+            min-height: 40px;
         }}
+        /* Centered Interactive Heart Button */
         div[data-testid="stButton"] > button {{
             background-image: url('data:image/png;base64,{heart_b64}') !important;
             background-color: transparent !important;
@@ -188,13 +197,11 @@ else:
             background-position: center !important;
             border: none !important;
             outline: none !important;
-            width: 120px !important;
-            height: 120px !important;
+            width: 130px !important;
+            height: 130px !important;
             box-shadow: none !important;
             cursor: pointer !important;
             color: transparent !important;
-            margin: 0 auto !important;
-            display: block !important;
         }}
         div[data-testid="stButton"] > button:hover,
         div[data-testid="stButton"] > button:focus,
