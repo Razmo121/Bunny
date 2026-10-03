@@ -6,7 +6,7 @@ import streamlit as st
 # Streamlit Page Setup
 st.set_page_config(
     page_title="Bub & Bun ❤️",
-    page_icon="💖",
+    page_icon="heart.png",
     layout="centered"
 )
 
